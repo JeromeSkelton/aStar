@@ -1,0 +1,119 @@
+Summary:
+My code does everything as described in the mark sheet provided. To use my code you simply
+click two nodes to calculate the shortest path between them by distance, or click an empty
+space to clear all selections. If you wish to find the fastest route, once you have clicked
+your two nodes, then type "speed" exactly like that in the search box and if there is a faster
+route the highlighted segments will change (I used this search function as I was unsure how
+to create new buttons and edit the GUI).
+
+g* and h*:
+For my gCost I used segment length from the starting node to the current node.
+For my hCost I used the physical distance from the current node to the goal node
+in a straight line (ignoring paths) recorded in km's, for challenge i added an additional
+speedCost on top of this that is calculated by segment length / speed limit of that road =
+time to travel that segment going the max speed (recorded in minutes).
+
+Testing:
+testing my code for minimum i simply ran my code over and over until it started to produce the results
+asked for on the handout, for completion i found a highWay and clicked the same two nodes switching them
+between goal node and start node to see if the path changes and it did, and for challenge I would test on
+a bunch of different nodes to see if the path changes when a faster route is found and it does.
+
+Pseudocode for A*:
+
+intialize priorityQueue
+intialize traveled stack
+Construct starting Tuple<starting node,null (previous tuple),0,f*,null (linking segment)>
+offer starting Node to the priorityQueue
+set gCostTotal to 0
+
+while(priorityQueue is not empty) {
+	poll the Tuple from priority queue
+	get currentNode from Tuple (node)
+	set gCostTotal to the tuples gCost
+
+	IF (node is not visited) {
+		set visited for node to true
+		if (node is the goalNode) {
+			while (currentTuple's previous tuple is not null) {
+				push segment from currentTuple into traveled stack
+				set currentTuple to be currentTuple's previousTuple
+			}
+			return traveled stack
+		}
+
+		FOR (every segment in current nodes segments) {
+			intialize new node called neighbour and set to null
+	
+			IF (currentNode is the starting node of the segment) {
+				set neighbour to the end node of the segment
+			} ELSE IF (segment is not one way) {
+				set neighbour to the start node of the segment
+			}
+
+			IF (neighbour is not null) {
+				IF (neighbour has not been visited) {
+					offer new Tuple<neigbour,currentTuple,g*,f*> to priorityQueue
+				}
+			}
+		}
+	}
+
+return an empty traveled stack
+
+
+
+Core Questions:
+1. A*
+
+Step 1 : fringe - {<E,D,10,26> | <F,D,8,27> | <A,D,15,53> | <C,D,14,51>}
+next visit - <E,D,10,26>
+
+Step 2 : fringe - {<F,D,8,27> | <A,D,15,53> | <C,D,14,51> | <H,E,31,31>}
+next visit - <F,D,8,27>
+
+Step 3 : fringe - {<G,F,18,19> | <C,D,14,51> | <H,E,31,31> | <A,D,15,53>  | <I,F,23,39}
+next visit - <G,F,18,19>
+
+Step 4 : fringe - {<H,G,28,28> | <A,D,15,53> | <C,D,14,51> | <H,E,31,31> | <I,F,23,39 | <I,G,32,48>}
+next visit - <H,G,28,28> (goal node reached)
+
+Shortest path of nodes: D -> F -> G -> H
+
+2. Dijkstra
+
+Step 1 : fringe - {<F,D,8> | <E,D,10> | <A,D,15> | <C,D,14>}
+next visit - <F,D,8>
+
+Step 2 : fringe - {<E,D,10> | <A,D,15> | <C,D,14> | <G,F,18> | <I,F,23>}
+next visit - <E,D,10>
+
+Step 3 : fringe - {<C,D,14> | <A,D,15> | <G,F,18> | <I,F,23> | <H,E,31>}
+next visit - <C,D,14>
+
+Step 4 : fringe - {<A,D,15> | <G,F,18> | <I,F,23> | <H,E,31> | <B,C,22>}
+next visit - <A,D,15>
+
+Step 5 : fringe - {<G,F,18> | <I,F,23> | <H,E,31> | <B,C,22> | <B,A,22>}
+next visit - <G,F,18>
+
+Step 6 : fringe - {<B,C,22> | <B,A,22>  | <I,F,23> | <H,E,31> | <I,G,32> | <H,G,28>}
+next visit - <B,C,22>
+
+Step 7 : fringe - {<I,F,23> | <H,E,31> | <I,G,32> | <H,G,28>}
+next visit - <I,F,23>
+
+Step 8 : fringe - {<H,G,28> | <H,E,31> | <I,G,32>}
+next visit - <H,G,28> (goal node reached)
+
+Shortest path of nodes: D -> F -> G -> H
+
+3.
+
+Dijkstra's algorithim relies solely on gCost to calculate its way to the goal node,
+the problem with this is it may choose to traverse to nodes closer to the current node
+but actually further from the goal node. A* fixes this problem by calculating heuristic cost
+on top of the gCost known as the fCost, the heuristic cost is the physical distance from the
+current node to the goal node, ignoring node traversal, simply just a straight line, because
+of this addded measure of accuracy A* searches visit only nodes that are moving us towards
+the goal at each step.
