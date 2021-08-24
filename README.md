@@ -1,5 +1,5 @@
 # aStar
-An A* implementation on a node map of NZ and Auckland
+An A* search implementation on a node map of NZ and Auckland
 
 To use my code you simply
 click two nodes to calculate the shortest path between them by distance, or click an empty
